@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ElectronNET.API" Version="8.31.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="3.2.0-rc1.20223.4" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="electron.manifest.json">

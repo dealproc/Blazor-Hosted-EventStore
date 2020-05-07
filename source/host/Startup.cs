@@ -28,16 +28,14 @@ namespace host {
                 app.UseHsts();
             }
 
-            app.Use(async(ctx,next)=>{
-                ctx.Response.Headers.Add("Content-Security-Policy", "script-src 'self'; style-src 'self'; img-src 'self'");
-                await next();
-            });
-
             app.UseDefaultFiles();
-            app.UseStaticFiles(new StaticFileOptions{
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
-                RequestPath = ""
-            });
+            app.UseStaticFiles();
+            // app.UseStaticFiles(new StaticFileOptions{
+            //     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+            //     RequestPath = ""
+            // });
+
+            app.UseBlazorFrameworkFiles();
 
             if (HybridSupport.IsElectronActive) {
                 ElectronBootstrap();
@@ -49,6 +47,9 @@ namespace host {
                 Width = 1024,
                 Height = 768,
                 Show = false,
+                WebPreferences = new WebPreferences{
+                    WebSecurity = false
+                }
             };
             var browserWindow = await Electron.WindowManager.CreateWindowAsync(opts);
             

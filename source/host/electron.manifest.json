@@ -29,7 +29,6 @@
         "filter": ["**/*"]
       },
       "**/*"
-    ],
-    "start_url": "index.html"
+    ]
   }
 }
