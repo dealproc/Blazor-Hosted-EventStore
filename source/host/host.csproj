@@ -4,6 +4,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ElectronNET.API" Version="8.31.1" />
+    <PackageReference Include="EventStore.Client" Version="6.0.0-preview3" />
+    <PackageReference Include="EventStore.Client.Embedded" Version="6.0.0-preview3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="3.2.0-rc1.20223.4" />
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using ElectronNET.API;
 using ElectronNET.API.Entities;
-
+using EventStore.ClientAPI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +18,17 @@ namespace host {
     public class Startup {
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services) { }
+        public void ConfigureServices(IServiceCollection services) { 
+            // event store
+            services.AddSingleton<IEventStoreConnection>((ctx) => {
+                // var options = ctx.GetService<IOptions<ConnectionStringsConfiguration>>();
+                // var config = options.Value;
+                //var conn = EventStoreConnection.Create(config.EventStore, $"processing-api-{System.Environment.MachineName}");
+                var conn = EventStoreConnection.Create("ConnectTo=tcp://admin:changeit@localhost:1113; HeartBeatTimeout=300000", $"processing-api-{System.Environment.MachineName}");
+                conn.ConnectAsync().Wait(); //TODO: Is there a better way than saying "Wait()"?
+                return conn;
+            });
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
