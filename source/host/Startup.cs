@@ -30,10 +30,11 @@ namespace host {
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            // app.UseStaticFiles(new StaticFileOptions{
-            //     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
-            //     RequestPath = ""
-            // });
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+                RequestPath = ""
+            });
 
             app.UseBlazorFrameworkFiles();
 
