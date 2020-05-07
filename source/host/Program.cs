@@ -19,23 +19,11 @@ namespace host {
                 .MinimumLevel.Verbose()
                 .CreateLogger();
 
-
-            var nodeBuilder = EmbeddedVNodeBuilder
-                .AsSingleNode()
-                .StartStandardProjections()
-                .RunProjections(ProjectionType.All)
-                .RunInMemory()
-                .WithInternalHttpOn(new IPEndPoint(IPAddress.Loopback, 1112))
-                .WithExternalHttpOn(new IPEndPoint(IPAddress.Loopback, 1113))
-                .WithExternalTcpOn(new IPEndPoint(IPAddress.Loopback, 1114))
-                .WithInternalTcpOn(new IPEndPoint(IPAddress.Loopback, 1115))
-                .DisableDnsDiscovery()
-                .WithGossipSeeds(new IPEndPoint[] {
-                    new IPEndPoint(IPAddress.Loopback, 2112),
-                        new IPEndPoint(IPAddress.Loopback, 3112)
-                });
-            var _node = nodeBuilder.Build();
-            _node.StartAsync(true).Wait(TimeSpan.FromSeconds(30));
+            var nodeBuilder = EmbeddedVNodeBuilder.AsSingleNode()
+                .OnDefaultEndpoints()
+                .RunInMemory();
+            var node = nodeBuilder.Build();
+            node.StartAsync(true).Wait();
 
             Log.Information("Hello world!");
 
