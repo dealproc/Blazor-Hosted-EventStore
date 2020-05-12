@@ -2,10 +2,11 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-using EventStore.ClientAPI;
+using EventStore.Client;
 
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace app {
     public class Program {
@@ -14,14 +15,19 @@ namespace app {
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            // event store
-            builder.Services.AddSingleton<IEventStoreConnection>((ctx) => {
-                // var options = ctx.GetService<IOptions<ConnectionStringsConfiguration>>();
-                // var config = options.Value;
-                //var conn = EventStoreConnection.Create(config.EventStore, $"processing-api-{System.Environment.MachineName}");
-                var conn = EventStoreConnection.Create("ConnectTo=tcp://admin:changeit@127.0.0.1:1113; HeartBeatTimeout=300000", $"blazor-client-{System.Environment.MachineName}");
-                conn.ConnectAsync().Wait(); //TODO: Is there a better way than saying "Wait()"?
-                return conn;
+
+            builder.Services.Configure<EventStoreClientSettings>(options => {
+                options.ConnectivitySettings = new EventStoreClientConnectivitySettings { Address = new Uri("http://127.0.0.1:2113") };
+            });
+            builder.Services.AddSingleton(provider =>
+            {
+                var options = provider.GetService<IOptions<EventStoreClientSettings>>();
+                return new EventStoreClient(options);
+            });
+            builder.Services.AddSingleton(provider =>
+            {
+                var options = provider.GetService<IOptions<EventStoreClientSettings>>();
+                return new EventStorePersistentSubscriptionsClient(options.Value);
             });
 
             await builder.Build().RunAsync();

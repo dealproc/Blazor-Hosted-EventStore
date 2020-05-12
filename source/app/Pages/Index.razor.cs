@@ -1,9 +1,8 @@
 using System;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
-
-using EventStore.ClientAPI;
-using EventStore.ClientAPI.SystemData;
-
+using EventStore.Client;
 using Microsoft.AspNetCore.Components;
 
 namespace app {
@@ -13,33 +12,32 @@ namespace app {
         const string _eventName = "announcement-message";
 
         [Inject]
-        protected IEventStoreConnection Connection { get; set; }
+        protected EventStoreClient Client { get; set; }
+        [Inject]
+        protected EventStorePersistentSubscriptionsClient SubscriptionsClient { get; set; }
+        protected UserCredentials Credentials => new UserCredentials("admin", "changeit");
         protected long EventsReceived { get; private set; }
-        private EventStorePersistentSubscriptionBase _persistentSubscription;
-        private UserCredentials _credentials = new UserCredentials("admin", "changeit");
 
-        protected override async Task OnInitializedAsync() {
-            var subscriptionSettings = PersistentSubscriptionSettings.Create()
-                .ResolveLinkTos()
-                .StartFromCurrent()
-                .Build();
+        protected override async Task OnInitializedAsync()
+        {
+            await SubscriptionsClient.CreateAsync(_subscriptionStream, _channel,
+                new PersistentSubscriptionSettings(resolveLinkTos: true), Credentials);
 
-            await Connection.CreatePersistentSubscriptionAsync(
+            await SubscriptionsClient.SubscribeAsync(
                 _subscriptionStream,
-                _channel,
-                subscriptionSettings,
-                _credentials);
-
-            _persistentSubscription = await Connection.ConnectToPersistentSubscriptionAsync(
-                stream: _subscriptionStream,
-                groupName: _channel,
-                eventAppeared: OnEventAppeared,
-                userCredentials: _credentials);
+                _channel, eventAppeared:
+                OnEventAppeared, OnSubscriptionDropped);
         }
 
-        private Task OnEventAppeared(EventStorePersistentSubscriptionBase arg1, ResolvedEvent arg2, int? arg3) {
+        private Task OnEventAppeared(PersistentSubscription arg1, ResolvedEvent arg2, int? arg3, CancellationToken arg4)
+        {
             EventsReceived += 1;
             return Task.CompletedTask;
+        }
+
+        private void OnSubscriptionDropped(PersistentSubscription sub, SubscriptionDroppedReason reason, Exception? exc)
+        {
+            
         }
 
         protected async Task Send() {
@@ -47,10 +45,10 @@ namespace app {
                 Title = "Test Message",
                 Message = "Some message to send over to a user."
             };
-            var msgbytes = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(msg);
-            var data = new EventStore.ClientAPI.EventData(Guid.NewGuid(), _eventName, true, msgbytes, new byte[0]);
+            var data = new ReadOnlyMemory<byte>(JsonSerializer.SerializeToUtf8Bytes(msg));
+            var eventData = new EventData(new Uuid(), _eventName, data, new byte[0]);
 
-            await Connection.AppendToStreamAsync(_channel, ExpectedVersion.Any, _credentials, data);
+            await Client.AppendToStreamAsync(_subscriptionStream, StreamState.Any, new[]{eventData}, userCredentials: Credentials);
         }
     }
 }

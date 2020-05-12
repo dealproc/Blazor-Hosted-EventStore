@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.1/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.1/resharper-host/local/Transient/ReSharperHost/v201/SolutionCaches/_Blazor-Hosted-EventStore.-2138324482.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.nuget/packages/eventstore.client.embedded/6.0.0-preview3.116/Prelude" t="Include">
+      <e p="1Prelude.js" t="Include" />
+      <e p="Modules.js" t="Include" />
+      <e p="ModulesExecuted.js" t="Include" />
+      <e p="Projections.js" t="Include" />
+    </e>
+    <e p="$USER_HOME$/.nuget/packages/eventstore.client.embedded/6.0.0-preview3.116/runtimes/linux-x64/native/libjs1.so" t="Include" />
+    <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p="Blazor-Hosted-EventStore.sln" t="IncludeFlat" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="source" t="Include">
+        <e p="app" t="IncludeRecursive">
+          <e p="AnAnnouncement.cs" t="Include" />
+          <e p="App.razor" t="Include" />
+          <e p="Infrastructure" t="Include">
+            <e p="AsyncUtils.cs" t="Include" />
+          </e>
+          <e p="Pages" t="Include">
+            <e p="Counter.razor" t="Include" />
+            <e p="FetchData.razor" t="Include" />
+            <e p="Index.razor" t="Include" />
+            <e p="Index.razor.cs" t="Include" />
+          </e>
+          <e p="Program.cs" t="Include" />
+          <e p="Properties" t="Include">
+            <e p="launchSettings.json" t="Include" />
+          </e>
+          <e p="Shared" t="Include">
+            <e p="MainLayout.razor" t="Include" />
+            <e p="NavMenu.razor" t="Include" />
+            <e p="SurveyPrompt.razor" t="Include" />
+          </e>
+          <e p="_Imports.razor" t="Include" />
+          <e p="app.csproj" t="IncludeRecursive" />
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Debug" t="Include">
+              <e p="netstandard2.1" t="Include">
+                <e p="app.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="packages-microsoft-prod.deb" t="Include" />
+          <e p="wwwroot" t="Include">
+            <e p="css" t="Include">
+              <e p="app.css" t="Include" />
+              <e p="bootstrap" t="Include">
+                <e p="bootstrap.min.css" t="Include" />
+                <e p="bootstrap.min.css.map" t="Include" />
+              </e>
+              <e p="open-iconic" t="Include">
+                <e p="FONT-LICENSE" t="Include" />
+                <e p="ICON-LICENSE" t="Include" />
+                <e p="README.md" t="Include" />
+                <e p="font" t="Include">
+                  <e p="css" t="Include">
+                    <e p="open-iconic-bootstrap.min.css" t="Include" />
+                  </e>
+                  <e p="fonts" t="Include">
+                    <e p="open-iconic.eot" t="Include" />
+                    <e p="open-iconic.otf" t="Include" />
+                    <e p="open-iconic.svg" t="Include" />
+                    <e p="open-iconic.ttf" t="Include" />
+                    <e p="open-iconic.woff" t="Include" />
+                  </e>
+                </e>
+              </e>
+            </e>
+            <e p="favicon.ico" t="Include" />
+            <e p="index.html" t="Include" />
+            <e p="sample-data" t="Include">
+              <e p="weather.json" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="host" t="IncludeRecursive">
+          <e p="Program.cs" t="Include" />
+          <e p="Properties" t="Include">
+            <e p="launchSettings.json" t="Include" />
+          </e>
+          <e p="Startup.cs" t="Include" />
+          <e p="appsettings.Development.json" t="Include" />
+          <e p="appsettings.json" t="Include" />
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="electron.manifest.json" t="Include" />
+          <e p="host.csproj" t="IncludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Debug" t="Include">
+              <e p="netcoreapp3.1" t="Include">
+                <e p="host.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+      </e>
+    </e>
+  </component>
+</project>
