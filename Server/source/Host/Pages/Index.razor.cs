@@ -25,18 +25,20 @@ namespace Host.Pages {
 
             try {
                 await Connection.CreatePersistentSubscriptionAsync(_subscriptionStream, _channel,
-                        subscriptionSettings, new UserCredentials("admin", "changeit"));
+                    subscriptionSettings, new UserCredentials("admin", "changeit"));
             } catch (Exception) {
                 await Connection.UpdatePersistentSubscriptionAsync(_subscriptionStream, _channel,
-                        subscriptionSettings, new UserCredentials("admin", "changeit"));
+                    subscriptionSettings, new UserCredentials("admin", "changeit"));
             }
 
             var isConnected = await Connection.ConnectToPersistentSubscriptionAsync(
                 stream: _subscriptionStream,
                 groupName: _channel,
-                eventAppeared: (sub, e, position) => {
-                    EventsReceived += 1;
-                    return Task.CompletedTask;
+                eventAppeared: async(sub, e, position) => {
+                    await InvokeAsync(() => {
+                        EventsReceived += 1;
+                        StateHasChanged();
+                    });
                 },
                 subscriptionDropped: (sub, reason, exc) => { },
                 userCredentials : new UserCredentials("admin", "changeit"));
