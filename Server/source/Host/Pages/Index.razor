@@ -1,7 +1,9 @@
 ﻿@page "/"
+@inherits IndexViewModel
 
-<h1>Hello, world!</h1>
+<h1>EventStore Test</h1>
 
-Welcome to your new app.
+<h1>Counter</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<p>Events received from EventStore: @EventsReceived</p>
+<button class="btn btn-primary" @onclick="Send">Send Message</button>

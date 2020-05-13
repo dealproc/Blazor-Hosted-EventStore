@@ -1,20 +1,20 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net;
 
 using ElectronNET.API;
 using ElectronNET.API.Entities;
 
+using EventStore.ClientAPI.Embedded;
+using EventStore.Core;
+
 using Host.Data;
 
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Host {
     public class Startup {
@@ -24,9 +24,34 @@ namespace Host {
 
         public IConfiguration Configuration { get; }
 
+        protected ClusterVNode Node { get; private set; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services) {
+            services.AddSingleton(ctx => {
+                var log = ctx.GetService<ILogger<Startup>>();
+                //RESEARCH: Should this be in a hosted service instead?
+                var nodeBuilder = EmbeddedVNodeBuilder.AsSingleNode()
+                    .DisableExternalTls()
+                    .DisableInternalTls()
+                    .WithInternalHttpOn(new IPEndPoint(IPAddress.Loopback, 1112))
+                    .WithInternalTcpOn(new IPEndPoint(IPAddress.Loopback, 1113))
+                    .DisableDnsDiscovery()
+                    .WithGossipSeeds(new IPEndPoint[] {
+                        new IPEndPoint(IPAddress.Loopback, 2112),
+                            new IPEndPoint(IPAddress.Loopback, 3112)
+                    })
+                    .RunInMemory();
+                Node = nodeBuilder.Build();
+                Node.StartAsync(true).Wait();
+
+                var conn = EmbeddedEventStoreConnection.Create(Node);
+                conn.ConnectAsync().Wait(TimeSpan.FromSeconds(30));
+
+                return conn;
+            });
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
@@ -42,7 +67,7 @@ namespace Host {
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

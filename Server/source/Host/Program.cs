@@ -20,8 +20,11 @@ namespace Host {
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
-            .ConfigureServices(services => {
-                services.AddHostedService<Services.EmbeddedEventStoreService>();
+            .ConfigureServices((ctx, services) => {
+                var connectionStringsSection = ctx.Configuration.GetSection("ConnectionStrings");
+                var emailSection = ctx.Configuration.GetSection("Email");
+                services.Configure<ConnectionStringOptions>(connectionStringsSection);
+                services.Configure<EmailServiceOptions>(emailSection);
             })
             .ConfigureWebHostDefaults(webBuilder => {
                 webBuilder.UseElectron(args);
