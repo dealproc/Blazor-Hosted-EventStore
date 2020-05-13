@@ -4,4 +4,19 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ElectronNET.Api" Version="8.31.2" />
+    <PackageReference Include="EventStore.Client" Version="6.0.0-preview3" />
+    <PackageReference Include="EventStore.Client.Embedded" Version="6.0.0-preview3" />
+    <PackageReference Include="Serilog" Version="2.9.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.11.4" />
+    <PackageReference Include="Grpc.Core.Api" Version="2.28.1" />
+    <PackageReference Include="HdrHistogram" Version="2.5.0" />
+    <PackageReference Include="HostStat.NET" Version="1.0.1" />
+    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.61701" />
+    <PackageReference Include="SimpleSyndicate.UriTemplate" Version="1.0.3" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
+  </ItemGroup>
+
 </Project>
