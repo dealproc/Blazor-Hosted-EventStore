@@ -5,5 +5,10 @@
 
 <h1>Counter</h1>
 
-<p>Events received from EventStore: @EventsReceived</p>
-<button class="btn btn-primary" @onclick="Send">Send Message</button>
+<button class="btn btn-primary" @onclick="AddCounter">Add Counter</button>
+
+<Host.Pages.Components.ListViewTemplate Items="Counters" T="Counter">
+    <ItemTemplate Context="counter">
+        <li>@counter.Label clicked @counter.NumberOfClicks <button class="btn btn-info" onclick="@((Action<EventArgs>) (async args => await ClickCounter(counter)))">Notify</button></li>
+    </ItemTemplate>
+</Host.Pages.Components.ListViewTemplate>
