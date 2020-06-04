@@ -57,9 +57,12 @@ namespace Host.Pages {
 
         protected override async Task OnInitializedAsync() {
             await base.OnInitializedAsync();
+
+            Counters.Clear();
+
             var subSettings = PersistentSubscriptionSettings.Create()
                 .ResolveLinkTos()
-                .StartFromBeginning()
+                .StartFromCurrent()
                 .Build();
 
             try {
