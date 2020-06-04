@@ -3,8 +3,9 @@ using System.Net;
 
 using ElectronNET.API;
 using ElectronNET.API.Entities;
-
+using EventStore.ClientAPI;
 using EventStore.ClientAPI.Embedded;
+using EventStore.ClientAPI.SystemData;
 using EventStore.Core;
 
 using Host.Data;
@@ -42,11 +43,15 @@ namespace Host {
                         new IPEndPoint(IPAddress.Loopback, 2112),
                             new IPEndPoint(IPAddress.Loopback, 3112)
                     })
+                    .EnableTrustedAuth()
                     .RunInMemory();
                 Node = nodeBuilder.Build();
                 Node.StartAsync(true).Wait();
 
-                var conn = EmbeddedEventStoreConnection.Create(Node);
+                var conn = EmbeddedEventStoreConnection.Create(Node, 
+                    ConnectionSettings.Create()
+                        .SetDefaultUserCredentials(new UserCredentials("admin", "changeit"))
+                        .Build());
                 conn.ConnectAsync().Wait(TimeSpan.FromSeconds(30));
 
                 return conn;

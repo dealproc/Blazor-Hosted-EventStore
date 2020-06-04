@@ -28,10 +28,10 @@ namespace Host.Pages {
 
             try {
                 await Connection.CreatePersistentSubscriptionAsync(_subscriptionStream, _channel,
-                    subscriptionSettings, new UserCredentials("admin", "changeit"));
+                    subscriptionSettings, default); //, new UserCredentials("admin", "changeit"));
             } catch (Exception) {
                 await Connection.UpdatePersistentSubscriptionAsync(_subscriptionStream, _channel,
-                    subscriptionSettings, new UserCredentials("admin", "changeit"));
+                    subscriptionSettings, default); //, new UserCredentials("admin", "changeit"));
             }
 
             ClickSubscription = await Connection.ConnectToPersistentSubscriptionAsync(
@@ -44,7 +44,7 @@ namespace Host.Pages {
                     });
                 },
                 subscriptionDropped: (sub, reason, exc) => { },
-                userCredentials : new UserCredentials("admin", "changeit"));
+                userCredentials : default ); // : new UserCredentials("admin", "changeit"));
         }
 
         protected async Task Send() {
@@ -59,7 +59,7 @@ namespace Host.Pages {
                 JsonSerializer.SerializeToUtf8Bytes(msg),
                 new byte[0]);
 
-            await Connection.AppendToStreamAsync(_subscriptionStream, ExpectedVersion.Any, new [] { data }, new UserCredentials("admin", "changeit"));
+            await Connection.AppendToStreamAsync(_subscriptionStream, ExpectedVersion.Any, new [] { data }, default); //, new UserCredentials("admin", "changeit"));
         }
     }
 }
