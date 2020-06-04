@@ -16,8 +16,11 @@ namespace Host.Pages {
         [Inject]
         protected IEventStoreConnection Connection { get; set; }
         protected long EventsReceived { get; private set; }
+        protected EventStorePersistentSubscriptionBase ClickSubscription { get; private set; }
 
         protected override async Task OnInitializedAsync() {
+            await base.OnInitializedAsync();
+            
             var subscriptionSettings = PersistentSubscriptionSettings.Create()
                 .ResolveLinkTos()
                 .StartFromBeginning()
@@ -31,7 +34,7 @@ namespace Host.Pages {
                     subscriptionSettings, new UserCredentials("admin", "changeit"));
             }
 
-            var isConnected = await Connection.ConnectToPersistentSubscriptionAsync(
+            ClickSubscription = await Connection.ConnectToPersistentSubscriptionAsync(
                 stream: _subscriptionStream,
                 groupName: _channel,
                 eventAppeared: async(sub, e, position) => {
