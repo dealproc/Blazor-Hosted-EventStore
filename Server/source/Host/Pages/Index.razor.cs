@@ -29,15 +29,18 @@ namespace Host.Pages {
             _nextCounterNumber++;
             s_log.Information("Adding a counter.");
 
-            await InvokeAsync(() => {
-                Counters.Add(new Counter {
-                    CounterId = _nextCounterNumber,
-                        Label = $"Counter {_nextCounterNumber}",
-                        NumberOfClicks = 0
-                });
-                StateHasChanged();
-                s_log.Information("Counter added.");
-            });
+            var msg = new AddCounter {
+                Id = _nextCounterNumber,
+                Label = $"Counter {_nextCounterNumber}"
+            };
+            var data = new EventData(
+                Guid.NewGuid(),
+                "counter-added",
+                true,
+                JsonSerializer.SerializeToUtf8Bytes(msg),
+                new byte[0]
+            );
+            await Connection.AppendToStreamAsync(_subscriptionStream, ExpectedVersion.Any, new [] { data }, default);
         }
 
         protected async Task ClickCounter(Counter counter) {
@@ -62,7 +65,7 @@ namespace Host.Pages {
 
             var subSettings = PersistentSubscriptionSettings.Create()
                 .ResolveLinkTos()
-                .StartFromCurrent()
+                .StartFromBeginning()
                 .Build();
 
             try {
@@ -83,12 +86,27 @@ namespace Host.Pages {
                 eventAppeared: async(sub, e, position) => {
                     s_log.Information("Received counter-click.");
                     await InvokeAsync(() => {
-                        s_log.Information("Received counter-click.");
-                        var clickedOn = JsonSerializer.Deserialize<CounterClicked>(new ReadOnlySpan<byte>(e.Event.Data));
-                        var counter = Counters.SingleOrDefault(c => c.CounterId == clickedOn.CounterId);
-                        if (counter != null) {
-                            s_log.Information("Counter entry found.  Adding +1 to value.");
-                            counter.NumberOfClicks += 1;
+                        switch (e.Event.EventType) {
+                            case "counter-added":
+                                var added = JsonSerializer.Deserialize<AddCounter>(new ReadOnlySpan<byte>(e.Event.Data));
+
+                                Counters.Add(new Counter {
+                                    CounterId = added.Id,
+                                    Label = added.Label,
+                                    NumberOfClicks = 0
+                                });
+                
+                                s_log.Information("Counter added.");
+                                break;
+                            case "counter-clicked":
+                                var clickedOn = JsonSerializer.Deserialize<CounterClicked>(new ReadOnlySpan<byte>(e.Event.Data));
+                                var counter = Counters.SingleOrDefault(c => c.CounterId == clickedOn.CounterId);
+                                if (counter != null) {
+                                    s_log.Information("Counter entry found.  Adding +1 to value.");
+                                    counter.NumberOfClicks += 1;
+                                }
+                                s_log.Information("Counter clicked.");
+                                break;
                         }
 
                         StateHasChanged();
@@ -113,5 +131,10 @@ namespace Host.Pages {
 
     public struct CounterClicked {
         public int CounterId { get; set; }
+    }
+
+    public struct AddCounter {
+        public int Id { get; set; }
+        public string Label { get; set; }
     }
 }
